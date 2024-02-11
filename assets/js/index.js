@@ -11,36 +11,48 @@ const $result = document.getElementById("result");
 
 async function getMoneyData() {
     try {
-        const res = await fetch("https://mindicador.cl/api/")
+        const res = await fetch("https://mindicador.cl/ap/")
         const data = await res.json();
-        console.log(data);
+       
 
         valorDolar = parseFloat(data.dolar.valor);
         valorEuro = parseFloat(data.euro.valor);
         valorUf = parseFloat(data.uf.valor);
         valorBitcoin =parseFloat(data.bitcoin.valor);
+        convertData();  
 
     } 
     catch (error) {
-        alert(error.message);
+        alert("Error. Api caída");
+        $inputBox.value="";
+        $inputBox.placeholder = "monto en pesos chilenos (CLP)";
+        $result.innerHTML =  "...";
     }
 }
 
-getMoneyData();
+
 
 function processData (){
 
-    let valorTemp = parseInt($inputBox.value);
+    console.log(getMoneyData())
+    getMoneyData();
+
+}
+
+
+function convertData(){
+
+let valorTemp = parseInt($inputBox.value);
 
       if(isNaN(valorTemp)) {
         alert("Porfavor, debe ingresar un valor numerico válido. No utilice puntos.");
         $inputBox.value="";
         $inputBox.placeholder = "monto en pesos chilenos (CLP)";
+        $result.innerHTML =  "...";
         return;
       }
 
     let tipoMoneda = $selectBox.value
-    console.log (tipoMoneda)
 
     if(tipoMoneda==="dolar"){
         valorTemp = parseFloat(valorTemp/valorDolar).toFixed(3);
@@ -55,4 +67,7 @@ function processData (){
         valorTemp = parseFloat(valorTemp/valorBitcoin).toFixed(3);
     }
     $result.innerHTML =  valorTemp;
+
 }
+
+/*https://dev.to/devcrafter91/elegant-way-to-check-if-a-promise-is-pending-577g */
