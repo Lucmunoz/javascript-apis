@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+    <header>
+    <h2>Conversor de monedas</h2>
+    </header>
+    <main>
+        <section>
+            <div class="main-container">
+                <div class="calculator-container">
+                    <h3>Monto a convertir</h3>
+                    <span>ingrese valor sin puntos</span>
+                    <input type="text" class="input-box" id="input-box" name="input" placeholder="monto en pesos chilenos (CLP)"/>
+                    <h3>Seleccione moneda a convertir</h3>
+                    <select class="money-select" name="money" id="money-select">
+                        <option value="dolar" default>Dolar</option>
+                        <option value="euro">Euro</option>
+                        <option value="uf">Unidad de Fomento</option>
+                        <option value="bitcoin">Bitcoin</option>
+                    </select> 
+                    <br> 
+                    <button class="button" id="button" type="button">CONVERTIR</button>
+                    <h4 id="result">...</h4>
+                </div>           
+                <div class="chart">
+                    <p>...</p>
+                </div>
+            </div>    
+        </section>
+    </main>
+    <script src="./assets/js/index.js"></script>
+</body>
+</html>
