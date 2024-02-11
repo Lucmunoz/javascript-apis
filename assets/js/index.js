@@ -6,19 +6,20 @@ let valorBitcoin = 0;
 const $inputBox = document.getElementById("input-box");
 const $selectBox = document.getElementById("money-select");
 const $Button = document.getElementById("button");
-$Button.addEventListener("click", processData);
+$Button.addEventListener("click", ProcessAmount);
 const $result = document.getElementById("result");
 
-async function getMoneyData() {
+
+async function getMoneyIndicators() {
     try {
-        const res = await fetch("https://mindicador.cl/ap/")
+        const res = await fetch("https://mindicador.cl/api/")
         const data = await res.json();
-       
 
         valorDolar = parseFloat(data.dolar.valor);
         valorEuro = parseFloat(data.euro.valor);
         valorUf = parseFloat(data.uf.valor);
         valorBitcoin =parseFloat(data.bitcoin.valor);
+
         convertData();  
 
     } 
@@ -27,15 +28,15 @@ async function getMoneyData() {
         $inputBox.value="";
         $inputBox.placeholder = "monto en pesos chilenos (CLP)";
         $result.innerHTML =  "...";
+
     }
 }
 
 
 
-function processData (){
+function ProcessAmount (){
 
-    console.log(getMoneyData())
-    getMoneyData();
+    getMoneyIndicators();
 
 }
 
@@ -45,7 +46,7 @@ function convertData(){
 let valorTemp = parseInt($inputBox.value);
 
       if(isNaN(valorTemp)) {
-        alert("Porfavor, debe ingresar un valor numerico válido. No utilice puntos.");
+        alert("Porfavor, debe ingresar un valor numerico válido. No utilice letras ni puntos.");
         $inputBox.value="";
         $inputBox.placeholder = "monto en pesos chilenos (CLP)";
         $result.innerHTML =  "...";
