@@ -2,16 +2,24 @@ let valorDolar = 0;
 let valorUf = 0;
 let valorEuro = 0;
 let valorBitcoin = 0;
+let apiStatus
+
 
 const $inputBox = document.getElementById("input-box");
 const $selectBox = document.getElementById("money-select");
 const $Button = document.getElementById("button");
-$Button.addEventListener("click", ProcessAmount);
-const $result = document.getElementById("result");
+$Button.addEventListener("click", getValueAndProcess);
+const $resultText = document.getElementById("result");
+const $chart = document.getElementById("myChart");
+
+
+
+window.addEventListener("load",renderGrafica);
 
 
 async function getMoneyIndicators() {
     try {
+
         const res = await fetch("https://mindicador.cl/api/")
         const data = await res.json();
 
@@ -20,26 +28,16 @@ async function getMoneyIndicators() {
         valorUf = parseFloat(data.uf.valor);
         valorBitcoin =parseFloat(data.bitcoin.valor);
 
-        convertData();  
-
+        convertData();
     } 
     catch (error) {
         alert("Error. Api caída");
         $inputBox.value="";
         $inputBox.placeholder = "monto en pesos chilenos (CLP)";
-        $result.innerHTML =  "...";
+        $resultText.innerHTML =  "..."; 
 
     }
 }
-
-
-
-function ProcessAmount (){
-
-    getMoneyIndicators();
-
-}
-
 
 function convertData(){
 
@@ -49,7 +47,7 @@ let valorTemp = parseInt($inputBox.value);
         alert("Porfavor, debe ingresar un valor numerico válido. No utilice letras ni puntos.");
         $inputBox.value="";
         $inputBox.placeholder = "monto en pesos chilenos (CLP)";
-        $result.innerHTML =  "...";
+        $resultText.innerHTML =  "...";
         return;
       }
 
@@ -67,8 +65,68 @@ let valorTemp = parseInt($inputBox.value);
     else if(tipoMoneda==="bitcoin"){
         valorTemp = parseFloat(valorTemp/valorBitcoin).toFixed(3);
     }
-    $result.innerHTML =  valorTemp;
+    $resultText.innerHTML =  valorTemp;
 
 }
 
-/*https://dev.to/devcrafter91/elegant-way-to-check-if-a-promise-is-pending-577g */
+
+
+function getValueAndProcess (){
+
+    getMoneyIndicators();
+
+}
+
+async function getAndCreateDataToChart() {
+    const res = await fetch("https://mindicador.cl/api/dolar/");
+    const datos = await res.json();
+
+    console.log (datos)
+    const labelsTemp = datos.serie.map((dato) => {
+        const fecha = dato.fecha.split("T")[0];
+        return fecha;
+    });
+
+    labels = labelsTemp.splice(0,10).reverse();
+
+    console.log (labels)
+   
+    const dataTemp = datos.serie.map((dato) => {
+    const magnitud = dato.valor;
+    return Number(magnitud);
+    });
+
+    data=dataTemp.splice(0,10).reverse();
+
+
+    console.log (data)
+
+    
+    const datasets = [
+    {
+    label: "Valor histórico dolar - 10 últimos días",
+    borderColor: "rgb(255, 99, 132)",
+    data
+    }
+    ];
+
+    return { labels, datasets };
+}
+
+
+
+
+
+async function renderGrafica() {
+
+const data = await getAndCreateDataToChart();
+
+const config = {
+type: "line",
+data
+};
+
+
+myChart.style.backgroundColor = "white";
+new Chart(myChart, config);
+}

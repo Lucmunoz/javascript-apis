@@ -16,7 +16,7 @@
                 <div class="calculator-container">
                     <h3>Monto a convertir</h3>
                     <span>ingrese valor sin puntos</span>
-                    <input type="text" class="input-box" id="input-box" name="input" placeholder="monto en pesos chilenos (CLP)"/>
+                    <input type="number" class="input-box" id="input-box" name="input" placeholder="monto en pesos chilenos (CLP)"/>
                     <h3>Seleccione moneda a convertir</h3>
                     <select class="money-select" name="money" id="money-select">
                         <option value="dolar" default>Dolar</option>
@@ -27,13 +27,16 @@
                     <br> 
                     <button class="button" id="button" type="button">CONVERTIR</button>
                     <h4 id="result">...</h4>
-                </div>           
-                <div class="chart">
-                    <p>...</p>
-                </div>
+                </div>   
+                    <div class="chart-container">
+                        <canvas class="myChart" id="myChart">
+                        </canvas>
+                    </div>
+
             </div>    
         </section>
     </main>
     <script src="./assets/js/index.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 </html>
