@@ -46,6 +46,10 @@ header h2{
 }
 
 
+.input-box{
+font-style: italic;
+}
+
 .input-box, .money-select{
 
     margin-top: 5px;
@@ -71,9 +75,7 @@ header h2{
     width: 60%;
 }
 
-.input-money{
-    width: 60%;
-}
+
 
 .button{
     cursor: pointer;
@@ -95,4 +97,16 @@ header h2{
 
 .myChart{
     background-color: white;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
 }
