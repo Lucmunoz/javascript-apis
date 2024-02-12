@@ -23,16 +23,12 @@ async function getDataAndCreateChart(tipo){
     try {
         const res = await fetch("https://mindicador.cl/api/"+tipo+"/");
         const datos = await res.json();
-
-
         createChart(datos);
     }
     catch (error) {
         alert("Error. Api caída");
     }
 }
-
-
 
 async function createChart(datos){
 
@@ -74,9 +70,9 @@ async function createChart(datos){
     myChart = new Chart(ctx, config);
 }
 
-
-
-//window.addEventListener("load",renderGrafica);
+function getValueAndProcess (){
+    getMoneyIndicators();
+}
 
 async function getMoneyIndicators() {
     try {
@@ -102,9 +98,9 @@ async function getMoneyIndicators() {
 
 function convertData(){
 
-let valorTemp = parseInt($moneyAmountInputBox.value);
+    let valorTemp = parseInt($moneyAmountInputBox.value);
 
-      if(isNaN(valorTemp)) {
+    if(isNaN(valorTemp)) {
         alert("Porfavor, debe ingresar un valor numerico válido. No utilice letras ni puntos.");
         $moneyAmountInputBox.value="";
         $moneyAmountInputBox.placeholder = "monto en pesos chilenos (CLP)";
@@ -127,12 +123,7 @@ let valorTemp = parseInt($moneyAmountInputBox.value);
         valorTemp = parseFloat(valorTemp/valorBitcoin).toFixed(3);
     }
     $convertedAmountText.innerHTML =  valorTemp;
-
 }
 
 
-
-function getValueAndProcess (){
-    getMoneyIndicators();
-}
 
