@@ -67,6 +67,7 @@ async function createChart(datos){
         myChart.destroy();
     }
     
+    ctx = document.getElementById("myChart").getContext('2d');
     myChart = new Chart(ctx, config);
 }
 
