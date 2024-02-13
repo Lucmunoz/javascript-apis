@@ -99,6 +99,11 @@ font-style: italic;
     background-color: white;
 }
 
+.alert{
+    color:red;
+    font-style: italic;
+}
+
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
