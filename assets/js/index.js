@@ -32,40 +32,6 @@ let ctx = document.getElementById("myChart").getContext('2d');
 /*********** DEFINICIÓ DE FUNCIONES ***********/
 /**********************************************/
 
-/*  Funcion encargada de comunicarse con la api mediante el metodo fecth. Utilizamos el await para esperar la respuesta de manera forzada. Esto pues javascript
-    ejecuta el código de manera lineal y sin esta palabra, no se esperarían los resultados y el valor de response sería "respuesta pendiente"
-    
-    Al utilizar la palabra await debemos indicar que la función en donde se invoca esta palabra, es del tipo asincronica (async).
-                      ⬇
-    const getData = async(currency)=>{...}
-    
-    Utilizando el método json(), obtendremos el siguiente objeto. Desde donde SOLO nos interesa el arreglo "serie"
-
-    {
-    "version": "1.7.0",
-    "autor": "mindicador.cl",
-    "codigo": "dolar",
-    "nombre": "Dólar observado",
-    "unidad_medida": "Pesos",
-    "serie": [
-        {
-            "fecha": "2024-02-14T03:00:00.000Z",
-            "valor": 971.56
-        },
-        ..., // <- son 31 argumentos dado que al utilizar la URL indicando el tipo de divisa, la api devuelve los datos del último mes.
-        {
-            "fecha": "2024-01-03T03:00:00.000Z",
-            "valor": 880.92
-        }
-            ]
-   }    
-
-    Entonces al declarar la linea "const {serie} = await res.json();" deconstruimos el objeto y extraemos directamente el arreglo serie y lo retornamos. La sintaxis
-    para deconstruir un objeto es: " const {identificador} = objeto; ", donde identificado es el nombre de la propiedad a extraer o acceder del objeto. Luego de 
-    deconstruir la variable identificador, contiene el valor de dicha propiedad.
-
-    Lo anterior, es algo simiar a la siguiente expresión "const identificador = objeto.identificador".
-*/
 
 const getData = async(currency)=>{
 
