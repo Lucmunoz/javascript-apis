@@ -10,15 +10,17 @@ $convertButton.addEventListener("click", function(){                    // media
 
 const $convertedAmountText = document.getElementById("result");         // Referencia a texto en el DOM que se modificará para mostrar el valor resultado (convertido)
 
-/*  El tag <canvas> define un área de bitmap dentro del HTML. Esto permite a apis poder dibujar graficos en esta área. Definimos una referecia al canvas con $chart. 
-    el ID del canvas es "myChart".
+/*  
     
-    para dibujar un gráfico, utilizamos el constructor newChart que recibe dos parámetros.
+    Para dibujar un gráfico, utilizamos el constructor newChart que recibe dos parámetros.
 
     myChart = new Chart(ctx, config);
 
-    con ctx definimos un contexto en el cual se dibujará el grafico. Yo lo entendí como un marco de referencia. Este contexto se obtiene aplicando el metodo get.Context('2d')
-    al tag <canvas> definido en el HTML, como se muestra a continuación:
+    El tag <canvas> es un elemento que define un área de bitmap dentro del HTML. Esto permite a apis poder dibujar graficos en esta área. La documentación del plugin pide que
+    tebenis que tener un elemento canvas en el HTML para poder dibujar un gráfico. Con la variable $chart defino una referencia a este elemento cuya ID es "myChart".
+
+    Luego, con ctx definimos un contexto en el cual se dibujará el grafico. Yo lo entendí como un marco de referencia o directrices para renderizar. Este "contexto" se obtiene
+    aplicando el metodo get.Context('2d') al tag <canvas> definido en el HTML como se muestra a continuación:
 
     let ctx = document.getElementById("myChart").getContext('2d'); 
 
@@ -26,10 +28,9 @@ const $convertedAmountText = document.getElementById("result");         // Refer
     la imágen, emplazamientos en el eje x e y de la ventana del navegador, espaciamiento de texto y se llaman además a muchos metodos para dibujar las líneas y despliegue de 
     información.
 
-    En el método getContext('2d'); se debe indicar que es un grafico 2d porque tambien se puede desplegar un grafico en 3d.    
+    Nota: En el método getContext('2d'); se debe indicar que es un grafico 2d porque tambien se puede desplegar un grafico en 3d.    
 
-    Por otra parte, como segundo argumento, la variable config es un objeto que define el tipo de grafico y la data. A su vez, la data se compone de las etiquetas (valores eje x)
-    y un arreglo dataset el cual contiene el titulo del gráfico y la data del eje y.
+    Por otra parte, el parámetro config establece algunas configuraciones para el gráfico y contiene información como titulos y los valores a mostrar en el eje x e y.
 
     El esqueleto del objeto config es el siguiente:
 
@@ -60,13 +61,13 @@ const $convertedAmountText = document.getElementById("result");         // Refer
 
     const myChart = new Chart(ctx,                  //contexto de renderizado
     {                                               //Objeto config....
-    type: 'bar',                                        //tipo de gráfico
+    type: 'line',                                        //tipo de gráfico
     data: {                                             // objeto data...
-        labels: Object.keys(data),                          // etiquetas a mostrar en eje X
+        labels: {...},                          // etiquetas a mostrar en eje X
         datasets: [                                         // Arreglo dataset...
             {   
-                label: 'Number of GitHub Stars',                // Titulo del gráfico
-                data: Object.values(data),                      // data eje y
+                label: 'Título del gráfico',                // Titulo del gráfico
+                data: {...},                      // data eje y
             },
         ],
     },
@@ -83,14 +84,16 @@ console.log(ctx)
 /*********** DEFINICIÓ DE FUNCIONES ***********/
 /**********************************************/
 
-/*  Funcion encargada de comunicarse con la api mediante el metodo fecth. Utilizamos el await para esperar la respuesta de manera forzada. Esto pues javascript
-    ejecuta el código de manera lineal y sin esta palabra, no se esperarían los resultados y el valor de response sería "respuesta pendiente"
+/*  Funcion encargada de comunicarse con la api mediante el metodo fecth. Utilizamos el await para esperar la respuesta de manera forzada. 
+    Esto pues javascript ejecuta el código de manera lineal y sin esta palabra, no se esperarían los resultados y el valor de response 
+    sería "respuesta pendiente"
     
-    Al utilizar la palabra await debemos indicar que la función en donde se invoca esta palabra, es del tipo asincronica (async).
+    Al utilizar la expresión await debemos indicar que la función en donde se invoca esta expresión, es del tipo asincronica (async).
                       ⬇
     const getData = async(currency)=>{...}
     
-    Utilizando el método json(), obtendremos el siguiente objeto. Desde donde SOLO nos interesa el arreglo "serie"
+    Utilizando el método json(), accedemos al a información que devuelve el metodo fetch. Se obtiene el siguiente objeto desde donde 
+    SOLO nos interesa el arreglo "serie"
 
     {
     "version": "1.7.0",
@@ -103,7 +106,8 @@ console.log(ctx)
             "fecha": "2024-02-14T03:00:00.000Z",
             "valor": 971.56
         },
-        ..., // <- son 31 argumentos dado que al utilizar la URL del tipo: "https://mindicador.cl/api/{tipo_indicador}" la api devuelve los valores del último mes (31 días).
+        ...,    // <= El arreglo tiene 31 objetos dado que al utilizar la URL del tipo: "https://mindicador.cl/api/{tipo_indicador}" la api devuelve 
+                // los valores de fecha y valor para el último mes (31 días).
         {
             "fecha": "2024-01-03T03:00:00.000Z",
             "valor": 880.92
@@ -111,9 +115,19 @@ console.log(ctx)
             ]
    }    
 
-    Entonces al declarar la linea "const {serie} = await res.json();" deconstruimos el objeto y extraemos directamente el arreglo serie y lo retornamos. La sintaxis
-    para deconstruir un objeto es: " const {identificador} = objeto; ", donde identificador es el nombre de la propiedad a extraer o acceder del objeto. Luego de 
-    deconstruir el objeto, la variable identificador contiene el valor de dicha propiedad del objeto.
+    Para acceder a este arreglo, podríamos operar de la siguiente manera:
+
+    const response = await fetch("https://mindicador.cl/api/"+currency+"/");
+    const data = await response.json();
+    const serie = data.serie
+
+    Pero hay una forma directa para acceder a este arreglo mediante la deconstrucción del objeto. Declaramos entonces la línea
+
+    "const {serie} = await res.json();" para estraer directamente el arreglo "serie" y lo retornamos. 
+    
+    La sintaxis para deconstruir un objeto es: " const {identificador} = objeto; ", donde identificador es el nombre de la propiedad
+    a extraer o acceder del objeto. Luego de deconstruir el objeto, la variable identificador contiene el valor de dicha propiedad del 
+    objeto.
 
     Lo anterior, es algo simiar a la siguiente expresión "const identificador = objeto.identificador".
 
@@ -121,32 +135,31 @@ console.log(ctx)
 */
 
 const getData = async(currency)=>{
-
-        const response = await fetch("https://mindicador.cl/api/"+currency+"/");
-        const {serie} = await response.json();
-        return serie
+   
+    const response = await fetch("https://mindicador.cl/api/"+currency+"/");
+    const {serie} = await response.json();
+    return serie
 }
 
-/*  Función gatillada por el evento click de botton "convertir" del DOM. Esta función recibe como parámetro la variable $moneyTypeSelectBox.value que contiene
-    la referencia y el valor del tipo de divisa activa en el cuadro de selección al momento de presionar el boton. Este valor es requerido para luego conformar
-    la URL de llamada a la API.
+/*  Función gatillada por el evento click de botton "convertir" del DOM. Esta función recibe como parámetro la variable 
+    $moneyTypeSelectBox.value que contiene la referencia y el valor del tipo de divisa activa en el cuadro de selección 
+    al momento de presionar el boton. Este valor es requerido para luego conformar la URL de llamada a la API.
 
-    Nuevamente, como la función getData realiza un fetch "esperado" por el await, aca, nuevamente tenemos que considerar la palabra reservada await (para esperar
-    la data) y por ende, tambien agregar la palabra async a la función.
+    Nuevamente, como la función getData realiza un fetch "esperado" por el await, aca, nuevamente tenemos que considerar 
+    la palabra reservada await (para esperar la data) y por ende, tambien agregar la palabra async a la función.
 
-    En este bloque es donde hacemos un try catch para manejar posibles errores de funcionamiento de la API. En caso de detectar un error, mediante el catch se
-    muestra un error en el DOM como sugiere el desafío.
+    En este bloque es donde hacemos un try catch para manejar posibles errores de funcionamiento de la API. En caso de 
+    detectar un error, mediante el catch se muestra un error en el DOM como sugiere el desafío.
 
-    Si no hay errores y se recibe una respuesta, la ejecución de la función continúa. Se recibe el arreglo "serie" en la variable data y esta, se envía como 
-    parámetro al llamar la función "convertAndShowCurrency()" Encargada de convertir el monto ingresado por el usuario (en pesos chilenos) a la divisa elegida para
-    luego mostrar el resultado en pantalla.
+    Si no hay errores y se recibe una respuesta, la ejecución de la función continúa. Se recibe el arreglo "serie" en 
+    la variable data y esta, se envía como parámetro al llamar la función "convertAndShowCurrency()" Encargada de 
+    convertir el monto ingresado por el usuario (en pesos chilenos) a la divisa elegida para luego mostrar el resultado en pantalla.
 
 */
 const buttonPress = async (currency) => {
 
     try{
         const data = await getData (currency)
-
         convertAndShowCurrency(data)
     }
     catch{
@@ -158,21 +171,25 @@ const buttonPress = async (currency) => {
     }
 }
 
-/*  Función encargada de convertir el monto ingresado por el usuario (en pesos chilenos) a la divisa elegida para luego mostrar el resultado en pantalla. Hacia el final de esta
-    función, se invoca a la función createChart encargada de crear el gráfico según exige el desafío.
+/*  Función encargada de convertir el monto ingresado por el usuario (en pesos chilenos) a la divisa elegida para luego 
+    mostrar el resultado en pantalla. Hacia el final de esta función, se invoca a la función createChart encargada de crear
+    el gráfico según exige el desafío.
 
-    En primer lugar, se consulta el valor de la moneda ingresado por el usuario. En pesos Chilenos. Si este valor no es valido o se preciona el boton con el cuadro vacío, se
-    hace un check simple y se emite una alerta, solicitando se corrija el monto ingresado.
+    En primer lugar, se consulta el valor de la moneda ingresado por el usuario. En pesos Chilenos. Si este valor no es 
+    valido o se preciona el boton con el cuadro vacío, se hace un check simple y se emite una alerta, solicitando se corrija 
+    el monto ingresado.
 
-    Por otra parte, como ya se mencionó, esta función recibe como parámetro "data" el arreglo "serie", parte del objeto que devuelve la API Mindicador.cl. Este arreglo contiene
-    la información de los últimos 30 o 31 días para la divisa consultada y su ordenamiento es del dato mas reciente al dato mas antiguo. Por tanto, el indice [0] contiene el 
+    Por otra parte, como ya se mencionó, esta función recibe como parámetro "data" el arreglo "serie", parte del objeto 
+    que devuelve la API Mindicador.cl. Este arreglo contiene la información de los últimos 30 o 31 días para la divisa 
+    consultada y su ordenamiento es del dato mas reciente al dato mas antiguo. Por tanto, el indice [0] contiene el 
     valor vigente de la divisa consultada. 
 
-    Obteniendo este valor, se raeliza el cálculo para transformar el monto al a nueva divisa y se proyecta en pantalla haciendo uso del metodo innerHTML.
+    Obteniendo este valor, se raeliza el cálculo para transformar el monto al a nueva divisa y se proyecta en pantalla 
+    haciendo uso del metodo innerHTML.
 
-    Finalmente, llamamos a la función createChart para crear el grafico según solicita el desafío. Esta función recibe como parámetros dos valores. Por una parte, el tipo de
-    divisa seleccionado en el elemento select al momento de presionar el boton y por otra parte, el arreglo data que contiene los datos historicos de la divisa seleccionada.
-
+    Finalmente, llamamos a la función createChart para crear el grafico según solicita el desafío. Esta función recibe 
+    como parámetros dos valores. Por una parte, el tipo de divisa seleccionado en el elemento select al momento de presionar 
+    el boton y por otra parte, el arreglo data que contiene los datos historicos de la divisa seleccionada.
 */
 
 const convertAndShowCurrency = (data) =>{
@@ -192,7 +209,8 @@ const convertAndShowCurrency = (data) =>{
 
     valorResultado = parseFloat(valorIngresado/valorDivisa).toFixed(3); 
 
-    $convertedAmountText.classList.remove('alert'); // Con el metodo classlit.remove buscamos si existe la clase "alert" y la removemos. (Esta clase se inyecta ante un error)
+    $convertedAmountText.classList.remove('alert'); // Con el metodo classlit.remove buscamos si existe la clase "alert" y la eliminarmos. 
+                                                    // (Esta clase se inyecta ante un error para cambiar color texto a rojo y estilo a italic.
     $convertedAmountText.innerHTML =  "Resultado: " + valorResultado;
 
     createChart($moneyTypeSelectBox.value, data);
@@ -235,34 +253,6 @@ const createChart = (currency, data) => {
     const labels = fechasTemp.splice(0,10).reverse();
     const values = valoresTemp.splice(0,10).reverse();
 
-/*  Para poder crear un grafico tenemos que utilizar el metodo "new Chart" el cual recibe dos parámetros:
-
-    new Chart(ctx, config)
-
-    ctx corresponde al contexto de renderizado. Esto se obtiene haciendo uso del metodo getContext('2d') a la tag <canvas> del DOM. 
-    Al trabajar con gráficas en 2D se debe indicar que es este el tipo de contexto. Esto se hace ingresando el parámetro '2D'.
-    
-    Por otra parte, el parametro config, se conforma por 
-    {
-        type: 'MyType',
-        data: data,
-        options: options
-    } 
-
-    donde a su vez, data se conforma de un arreglo de etiquetas (correspondiente a lo que se mostrará en el eje x) y un parámetro llamado dataset
-    {   
-        labels (valores eje x)
-        dataset
-    }
-
-    donde dataset está compuesto por el titulo del grafico y los valores del eje y.
-
-    {
-        label: "titlulo del gráfico"
-        data: valores eje y
-    }
-    */
-
     ctx = document.getElementById("myChart").getContext('2d');
    
     const datasets = [
@@ -274,28 +264,35 @@ const createChart = (currency, data) => {
 
 /*  Como segundo parámetro, se debe entregar un objeto que contendrá información de configuración del tipo de grafico y la data a renderizar.*/
 
-    const chartData = {labels, datasets}                    // Labels corresponde a arreglo de fechas (eje X). Datasets corresponde a arreglo que contiene el titulo 
-                                                            // del grafico y valores (puntos) del eje Y.
+    const chartData = {labels, datasets}                    // Labels corresponde a arreglo de fechas (eje X). Datasets corresponde a arreglo 
+                                                            // que contiene el titulo del grafico y valores (puntos) del eje Y.
 
     const config = {                                        // Objeto de configuración
         type: "line",                                       // se indica el tipo de grafico y la información (data) para renderizar el gráfico.
         data: chartData
     };
 
-/*  Antes de crear el grafico, revisamos si ya existe una instancia creada y si existe, se elimina mediante el metodo destroy(). Esto porque al momento en que 
-    querramos renderizar un nuevo grafico, al cambiar de tipo de moneda, el plugin indicará un error que hace mención a que la instancia previamente creada debe
-    ser destruida antes de crear un nuevo grafico:
+/*  Antes de crear el grafico, revisamos si ya existe una instancia creada y si existe, se elimina mediante el metodo destroy(). Esto porque 
+    al momento en que querramos renderizar un nuevo grafico, al cambiar de tipo de moneda, el plugin indicará un error que hace mención a 
+    que la instancia previamente creada debe ser destruida antes de crear un nuevo grafico:
 
     Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID 'myChart' can be reused.
 
-    Por tanto, si myChart es True, quiere decir que ya existe una instancia creada y la destruye para luego proceder a crear una nueva instancia asociada a la 
-    variable myChart.*/
+    Por tanto, si myChart es True, quiere decir que ya existe una instancia creada y la destruye para luego proceder a crear una nueva 
+    instancia asociada a la variable myChart.*/
 
     if(myChart){
         myChart.destroy();
     }
+
+
+
+
     
     $chart.classList.add("white-background");
+
+
+
     myChart = new Chart(ctx, config);
 }
 
