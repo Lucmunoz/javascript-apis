@@ -1,8 +1,7 @@
-let myChart
+let myChart // variable que recibirá al chart creado.
 
 const $moneyAmountInputBox = document.getElementById("input-box");      // Referencia a caja de texto donde el usuario ingresará el monto en pesos chilenos
 const $moneyTypeSelectBox = document.getElementById("money-select");    // Referencia a elemento Select donde el usuario seleccionará la moneda a convertir
-
 
 const $convertButton = document.getElementById("button");               // Referencia a boton el cual gatilla la consulta, cálculo y renderización de datos
 $convertButton.addEventListener("click", function(){                    // mediante la función "getValueAndProcess" asociada al evento "click"
@@ -214,7 +213,7 @@ const createChart = (currency, data) => {
 
     Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID 'myChart' can be reused.
 
-    Por tanto, si myChart es True, quiere decir que ya existe una instancia creada y la destruye para luego proceder a crear una nueva instancia asociaa a la 
+    Por tanto, si myChart es True, quiere decir que ya existe una instancia creada y la destruye para luego proceder a crear una nueva instancia asociada a la 
     variable myChart.*/
 
     if(myChart){
