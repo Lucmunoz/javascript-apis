@@ -149,7 +149,7 @@ function createChart(datos){
     /*  Algo simiar ocurre con los valores de cada objeto del arreglo. Se recorre el arreglo con los 30 datos de fehca y valor mediante un map desde donde se obtiene
         un arreglo "valuesTemp" que contendrá unicamente la data de valores de la moneda. Luego se extraén los 10 primeros datos y se invierte su orden.
         
-        haciendo uso del metodo Number y parsefloat se toman datos numericos en punto flotante.*/
+
 
     const valuesTemp = datos.map((dato) => {
         const valor = dato.valor;
