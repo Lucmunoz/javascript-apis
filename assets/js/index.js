@@ -83,6 +83,7 @@ const buttonPress = async (currency) => {
         convertAndShowCurrency(data)
     }
     catch{
+        alert("error")
     }
 }
 
@@ -147,7 +148,7 @@ const createChart = (currency, data) => {
 
     - El contexto de renderizado, sus propiedades y sus funciones. Esto se obtiene haciendo uso del metodo getContext('2d') a la tag
     <canvas> del DOM. Al trabajar con gráficas en 2D se debe indicar que es este el tipo de contexto. Esto se hace ingresando el parámetro '2D'.*/
-    
+
     ctx = document.getElementById("myChart").getContext('2d');
    
     const datasets = [
