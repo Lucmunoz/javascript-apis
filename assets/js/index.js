@@ -52,7 +52,7 @@ let ctx = document.getElementById("myChart").getContext('2d');
             "fecha": "2024-02-14T03:00:00.000Z",
             "valor": 971.56
         },
-        ..., // <- son 31 argumentos dado que al utilizar la URL indicando el tipo de divisa, la api devuelve los datos del último mes.
+        ..., // <- son 31 argumentos dado que al utilizar la URL del tipo: "https://mindicador.cl/api/{tipo_indicador}" la api devuelve los valores del último mes (31 días).
         {
             "fecha": "2024-01-03T03:00:00.000Z",
             "valor": 880.92
@@ -61,10 +61,12 @@ let ctx = document.getElementById("myChart").getContext('2d');
    }    
 
     Entonces al declarar la linea "const {serie} = await res.json();" deconstruimos el objeto y extraemos directamente el arreglo serie y lo retornamos. La sintaxis
-    para deconstruir un objeto es: " const {identificador} = objeto; ", donde identificado es el nombre de la propiedad a extraer o acceder del objeto. Luego de 
-    deconstruir la variable identificador, contiene el valor de dicha propiedad.
+    para deconstruir un objeto es: " const {identificador} = objeto; ", donde identificador es el nombre de la propiedad a extraer o acceder del objeto. Luego de 
+    deconstruir el objeto, la variable identificador contiene el valor de dicha propiedad del objeto.
 
     Lo anterior, es algo simiar a la siguiente expresión "const identificador = objeto.identificador".
+
+    Cuando la función finaliza, se retorna el valor de este arreglo.
 */
 
 const getData = async(currency)=>{
@@ -74,7 +76,21 @@ const getData = async(currency)=>{
         return serie
 }
 
-/* */
+/*  Función gatillada por el evento click de botton "convertir" del DOM. Esta función recibe como parámetro la variable $moneyTypeSelectBox.value que contiene
+    la referencia y el valor del tipo de divisa activa en el cuadro de selección al momento de presionar el boton. Este valor es requerido para luego conformar
+    la URL de llamada a la API.
+
+    Nuevamente, como la función getData realiza un fetch "esperado" por el await, aca, nuevamente tenemos que considerar la palabra reservada await (para esperar
+    la data) y por ende, tambien agregar la palabra async a la función.
+
+    En este bloque es donde hacemos un try catch para manejar posibles errores de funcionamiento de la API. En caso de detectar un error, mediante el catch se
+    muestra un error en el DOM como sugiere el desafío.
+
+    Si no hay errores y se recibe una respuesta, la ejecución de la función continúa. Se recibe el arreglo "serie" en la variable data y esta, se envía como 
+    parámetro al llamar la función "convertAndShowCurrency()" Encargada de convertir el monto ingresado por el usuario (en pesos chilenos) a la divisa elegida para
+    luego mostrar el resultado en pantalla.
+
+*/
 const buttonPress = async (currency) => {
 
     try{
@@ -83,25 +99,49 @@ const buttonPress = async (currency) => {
         convertAndShowCurrency(data)
     }
     catch{
-        alert("error")
+        alert("Estimado usuario, por favor intente nuevamente mas tarde.");
+        $moneyAmountInputBox.value="";
+        $moneyAmountInputBox.placeholder = "monto en pesos chilenos (CLP)";
+        $convertedAmountText.classList.add("alert");
+        $convertedAmountText.innerHTML =  "Base de datos no disponible. Porfavor intente nuevamente mas tarde.";
     }
 }
+
+/*  Función encargada de convertir el monto ingresado por el usuario (en pesos chilenos) a la divisa elegida para luego mostrar el resultado en pantalla. Hacia el final de esta
+    función, se invoca a la función createChart encargada de crear el gráfico según exige el desafío.
+
+    En primer lugar, se consulta el valor de la moneda ingresado por el usuario. En pesos Chilenos. Si este valor no es valido o se preciona el boton con el cuadro vacío, se
+    hace un check simple y se emite una alerta, solicitando se corrija el monto ingresado.
+
+    Por otra parte, como ya se mencionó, esta función recibe como parámetro "data" el arreglo "serie", parte del objeto que devuelve la API Mindicador.cl. Este arreglo contiene
+    la información de los últimos 30 o 31 días para la divisa consultada y su ordenamiento es del dato mas reciente al dato mas antiguo. Por tanto, el indice [0] contiene el 
+    valor vigente de la divisa consultada. 
+
+    Obteniendo este valor, se raeliza el cálculo para transformar el monto al a nueva divisa y se proyecta en pantalla haciendo uso del metodo innerHTML.
+
+    Finalmente, llamamos a la función createChart para crear el grafico según solicita el desafío. Esta función recibe como parámetros dos valores. Por una parte, el tipo de
+    divisa seleccionado en el elemento select al momento de presionar el boton y por otra parte, el arreglo data que contiene los datos historicos de la divisa seleccionada.
+
+*/
 
 const convertAndShowCurrency = (data) =>{
 
     let valorIngresado = parseInt($moneyAmountInputBox.value);
-    let valorDivisa = data[0].valor;
-
 
     if(isNaN(valorIngresado)) {
         alert("Porfavor, debe ingresar un valor numerico válido. No utilice letras ni puntos.");
         $moneyAmountInputBox.value="";
         $moneyAmountInputBox.placeholder = "monto en pesos chilenos (CLP)";
-        $convertedAmountText.innerHTML =  "...";
+        $convertedAmountText.classList.add("alert");
+        $convertedAmountText.innerHTML =  "Porfavor, debe ingresar un valor numerico válido. No utilice letras ni puntos.";
         return;
       }
 
+    let valorDivisa = data[0].valor;
+
     valorResultado = parseFloat(valorIngresado/valorDivisa).toFixed(3); 
+
+    $convertedAmountText.classList.remove('alert'); // Con el metodo classlit.remove buscamos si existe la clase "alert" y la removemos. (Esta clase se inyecta ante un error)
     $convertedAmountText.innerHTML =  "Resultado: " + valorResultado;
 
     createChart($moneyTypeSelectBox.value, data);
