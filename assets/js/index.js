@@ -10,21 +10,73 @@ $convertButton.addEventListener("click", function(){                    // media
 
 const $convertedAmountText = document.getElementById("result");         // Referencia a texto en el DOM que se modificará para mostrar el valor resultado (convertido)
 
-/*  El tag <canvas> define un área de bitmap dentro del HTML. Esto permite a apis poder dibujar graficos en esta área.
-    Definimos una referecia al canvas con $chart. el ID del canvas es "myChart".
+/*  El tag <canvas> define un área de bitmap dentro del HTML. Esto permite a apis poder dibujar graficos en esta área. Definimos una referecia al canvas con $chart. 
+    el ID del canvas es "myChart".
     
-    Por otra parte, par poder dibujar en el canvas, necesitamos definir un objeto de contexto 2d (2D context object) el cual debe ser entregado como argumento, al
-    momento de crear un nuevo chart:
+    para dibujar un gráfico, utilizamos el constructor newChart que recibe dos parámetros.
 
-            myChart = new Chart(ctx, config);
-                                 ↑
+    myChart = new Chart(ctx, config);
 
-    Así, el elemento <canvas> referenciado por $chart tiene un metodo llamado "getContext()" el cual se utiliza para obtener el contexto de renderizado, sus propiedades
-    y sus funciones. Al trabajar con gráficas en 2D se debe indicar que es este el tipo de contexto. Esto se hace ingresando el parámetro '2D'.
+    con ctx definimos un contexto en el cual se dibujará el grafico. Yo lo entendí como un marco de referencia. Este contexto se obtiene aplicando el metodo get.Context('2d')
+    al tag <canvas> definido en el HTML, como se muestra a continuación:
+
+    let ctx = document.getElementById("myChart").getContext('2d'); 
+
+    Al hacer un console.log a ctx se obtiene un objeto con muchas variables a objeto de definir como se dibujará el gráfico. Por mencionar algunas...Tipo de letra, suavizado de
+    la imágen, emplazamientos en el eje x e y de la ventana del navegador, espaciamiento de texto y se llaman además a muchos metodos para dibujar las líneas y despliegue de 
+    información.
+
+    En el método getContext('2d'); se debe indicar que es un grafico 2d porque tambien se puede desplegar un grafico en 3d.    
+
+    Por otra parte, como segundo argumento, la variable config es un objeto que define el tipo de grafico y la data. A su vez, la data se compone de las etiquetas (valores eje x)
+    y un arreglo dataset el cual contiene el titulo del gráfico y la data del eje y.
+
+    El esqueleto del objeto config es el siguiente:
+
+    {
+        type: 'bar',
+        data: {},
+        options: {} // Opcional.
+    }
+
+    El esqueleto de la propiedad data (arreglo de un objeto) es el siguiente:
+
+    {
+        labels,         //Datos del eje x
+        dataset:[{}]
+    }
+
+    y datasets se conforma de la siguiente manera.
+
+    [                                              
+        {   
+            label: 'Number of GitHub Stars',                // Titulo del gráfico
+            data: Object.values(data),                      // Datos del eje y
+        },
+    ],
+
+
+    Finalmente, el constructor newChart quedaría así:
+
+    const myChart = new Chart(ctx,                  //contexto de renderizado
+    {                                               //Objeto config....
+    type: 'bar',                                        //tipo de gráfico
+    data: {                                             // objeto data...
+        labels: Object.keys(data),                          // etiquetas a mostrar en eje X
+        datasets: [                                         // Arreglo dataset...
+            {   
+                label: 'Number of GitHub Stars',                // Titulo del gráfico
+                data: Object.values(data),                      // data eje y
+            },
+        ],
+    },
+});
+    
 */
 
 const $chart = document.getElementById("myChart");                      
 let ctx = document.getElementById("myChart").getContext('2d');
+console.log(ctx)
 
 
 /**********************************************/
@@ -185,8 +237,31 @@ const createChart = (currency, data) => {
 
 /*  Para poder crear un grafico tenemos que utilizar el metodo "new Chart" el cual recibe dos parámetros:
 
-    - El contexto de renderizado, sus propiedades y sus funciones. Esto se obtiene haciendo uso del metodo getContext('2d') a la tag
-    <canvas> del DOM. Al trabajar con gráficas en 2D se debe indicar que es este el tipo de contexto. Esto se hace ingresando el parámetro '2D'.*/
+    new Chart(ctx, config)
+
+    ctx corresponde al contexto de renderizado. Esto se obtiene haciendo uso del metodo getContext('2d') a la tag <canvas> del DOM. 
+    Al trabajar con gráficas en 2D se debe indicar que es este el tipo de contexto. Esto se hace ingresando el parámetro '2D'.
+    
+    Por otra parte, el parametro config, se conforma por 
+    {
+        type: 'MyType',
+        data: data,
+        options: options
+    } 
+
+    donde a su vez, data se conforma de un arreglo de etiquetas (correspondiente a lo que se mostrará en el eje x) y un parámetro llamado dataset
+    {   
+        labels (valores eje x)
+        dataset
+    }
+
+    donde dataset está compuesto por el titulo del grafico y los valores del eje y.
+
+    {
+        label: "titlulo del gráfico"
+        data: valores eje y
+    }
+    */
 
     ctx = document.getElementById("myChart").getContext('2d');
    
